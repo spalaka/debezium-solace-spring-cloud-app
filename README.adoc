@@ -1,1 +1,17 @@
-= Spring Cloud Stream CdcDebezium Source Kafka Binder Application
+= Debezium Solace Spring Cloud App
+
+= Flow
+
+MySQLDB -> Spring Cloud App (Sink: Debezium, Source: Solace) -> Solace
+
+The app will collect the change log and publish it to Solace broker.
+
+In class CdcDebeziumSourceSolaceApplication. added an exception in line 42. On every data load, app will fail after two records are processed successfully.
+
+= Observation
+If they are 10 records inserted in the database, as per logic in line 42 we are throwing exception after two records are processed. and the rest of the 8 messages are committing to offset. 
+
+To validate, after the spring app restart, we are not getting the 8 messages as they are already committed.
+
+= Expectation:
+If they failed with the exception, Debezium shouldn't commit the message which was failed and rest of the messages should not be processed.
